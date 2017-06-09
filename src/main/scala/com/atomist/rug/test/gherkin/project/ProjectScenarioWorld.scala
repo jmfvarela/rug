@@ -7,11 +7,10 @@ import com.atomist.project.edit.{FailedModificationAttempt, ModificationAttempt,
 import com.atomist.project.generate.ProjectGenerator
 import com.atomist.rug.RugNotFoundException
 import com.atomist.rug.kind.core.{ProjectContext, ProjectMutableView, RepoResolver}
-import com.atomist.rug.runtime.js.interop.NashornUtils
-import com.atomist.rug.runtime.js.{BaseRugContext, JavaScriptProjectOperation, LocalRugContext}
+import com.atomist.rug.runtime.js.{BaseRugContext, JavaScriptProjectOperation}
 import com.atomist.rug.test.gherkin._
-import com.atomist.source.{ArtifactSource, EmptyArtifactSource}
 import com.atomist.source.git.GitRepositoryCloner
+import com.atomist.source.{ArtifactSource, EmptyArtifactSource}
 
 /**
   * Convenient methods for working with projects
@@ -119,10 +118,10 @@ class ProjectScenarioWorld(
   @throws[InvalidParametersException]
   private def validateParams(op: JavaScriptProjectOperation): Unit = {
     // Pull parameters from script object mirror
-    val paramValues = op.jsVar.getOwnKeys(true).map(k => {
-      SimpleParameterValue(k, NashornUtils.stringProperty(op.jsVar, k, ""))
+    val paramValues = op.jsVar.keys().map(k => {
+      SimpleParameterValue(k, op.jsVar.stringProperty(k, ""))
     })
-    op.validateParameters(SimpleParameterValues(paramValues))
+    op.validateParameters(SimpleParameterValues(paramValues.toSeq))
   }
 
 }
