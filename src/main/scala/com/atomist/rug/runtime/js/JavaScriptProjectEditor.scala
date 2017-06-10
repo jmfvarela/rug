@@ -56,7 +56,6 @@ class JavaScriptProjectEditor(
         rugResolver = resolver)
 
       try {
-        // Important that we don't invoke edit on the prototype as otherwise all constructor effects are lost!
         jsc.invokeMember(
           jsVar,
           "edit",
