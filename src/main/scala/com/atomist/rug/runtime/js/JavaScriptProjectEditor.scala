@@ -61,7 +61,7 @@ class JavaScriptProjectEditor(
           jsVar,
           "edit",
           Some(validated),
-          wrapProject(pmv))
+          pmv)
 
         if (pmv.currentBackingObject == targetProject) {
           NoModificationNeeded("OK")
