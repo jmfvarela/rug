@@ -6,6 +6,7 @@ import com.atomist.project.common.InvalidParametersException
 import com.atomist.rug.kind.DefaultTypeRegistry
 import com.atomist.rug.kind.core.ProjectMutableView
 import com.atomist.rug.runtime.js.JavaScriptObject
+import com.atomist.rug.runtime.js.interop.ExposeAsFunction
 import com.atomist.rug.spi.{TypeRegistry, Typed, UsageSpecificTypeRegistry}
 import com.atomist.rug.ts.{CortexTypeGenerator, DefaultTypeGeneratorConfig}
 import com.atomist.source.git.GitRepositoryCloner
@@ -25,6 +26,8 @@ abstract class ScenarioWorld(val definitions: Definitions, rugs: Option[Rugs], c
   private var bindings: Map[String, Object] = Map()
 
   private var abortedBy: Option[String] = None
+
+  var abortedCause: Option[Throwable] = None
 
   private var ipe: InvalidParametersException = _
 
@@ -55,6 +58,16 @@ abstract class ScenarioWorld(val definitions: Definitions, rugs: Option[Rugs], c
     abortedBy = Some(msg)
   }
 
+  /**
+    * As above
+    * @param msg
+    * @param cause
+    */
+  def abort(msg: String, cause: Throwable): Unit = {
+    abortedBy = Some(msg)
+    abortedCause = Some(cause)
+  }
+
   def put(key: String, value: Object): Unit = {
     bindings = bindings + (key -> value)
   }
@@ -68,6 +81,7 @@ abstract class ScenarioWorld(val definitions: Definitions, rugs: Option[Rugs], c
   /**
     * Invalid parameters exception that aborted execution, or null
     */
+  @ExposeAsFunction
   def invalidParameters: InvalidParametersException = ipe
 
   def logInvalidParameters(ipe: InvalidParametersException): Unit = {
